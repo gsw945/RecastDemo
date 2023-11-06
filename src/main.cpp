@@ -43,8 +43,6 @@ int demo() {
 	std::cout << "Cleaning up..." << std::endl;
     dtFreeNavMeshQuery(navQuery);
     dtFreeNavMesh(navMesh);
-    delete &navQuery;
-    delete &navMesh;
 
     return 0;
 }

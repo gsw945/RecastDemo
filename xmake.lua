@@ -1,7 +1,6 @@
 add_rules("mode.debug", "mode.release")
 
-add_repositories("local-repo build")
-add_requires("recastnavigation >= 1.6.0", {alias = "recastnavigation", debug = true})
+add_requires("recastnavigation v1.6.0")
 
 target("RecastDemo")
     set_kind("binary")

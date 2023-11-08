@@ -3,7 +3,7 @@
 #include <DetourNavMesh.h>
 #include <DetourNavMeshQuery.h>
 
-#include "include/main.h"
+#include "main.h"
 
 using namespace std;
 

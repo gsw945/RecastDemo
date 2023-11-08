@@ -4,7 +4,7 @@ add_requires("recastnavigation v1.6.0")
 
 target("RecastDemo")
     set_kind("binary")
-    add_headerfiles("src/include/*.h")
+    add_includedirs("src/inc", {public = true})
     add_files("src/*.cpp")
     add_packages("recastnavigation")
 

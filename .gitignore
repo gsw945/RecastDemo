@@ -8,3 +8,5 @@ build/
 # VSCode
 .vscode/
 
+# VS project files
+vsxmake*/

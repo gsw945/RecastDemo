@@ -1,12 +1,15 @@
 add_rules("mode.debug", "mode.release")
 
+set_languages("cxx17", "c99")
+set_encodings("utf-8")
+
 add_requires("recastnavigation v1.6.0")
 
 target("RecastDemo")
     set_kind("binary")
     add_includedirs("src/inc", {public = true})
     add_files("src/*.cpp")
-    add_packages("recastnavigation")
+    add_packages("recastnavigation", {debug = true})
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

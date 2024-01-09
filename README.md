@@ -9,4 +9,6 @@ xmake -D -y
 xmake run
 # run debug mode
 xmake run -d RecastDemo
+# generate vs project and sln files
+xmake project -k vsxmake
 ```

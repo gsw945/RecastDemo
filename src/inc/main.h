@@ -1,18 +1,10 @@
 #include <cstring>
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <DetourNavMesh.h>
-
-/*
-// #include <fstream>
-std::ifstream file(navmeshFile, std::ios::binary | std::ios::ate);
-std::streamsize size = file.tellg();
-file.seekg(0, std::ios::beg);
-if (!file.read(buffer.data(), size)) {
-    file.close();
-    return -3;
-}
-file.close();
-*/
 
 static const int NAVMESHSET_MAGIC = 'M'<<24 | 'S'<<16 | 'E'<<8 | 'T'; //'MSET';
 static const int NAVMESHSET_VERSION = 1;
@@ -111,4 +103,18 @@ dtNavMesh* load_mesh(const char* path)
 	fclose(fp);
 
 	return mesh;
+}
+
+std::vector<int> stringSplit(std::string str, char delimiter) {
+	std::vector<int> vect;
+	std::stringstream ss(str);
+
+	for (int i; ss >> i;) {
+		vect.push_back(i);    
+		if (ss.peek() == delimiter) {
+			ss.ignore();
+		}
+	}
+
+	return vect;
 }

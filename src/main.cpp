@@ -1,81 +1,72 @@
+#include <cstdlib>
 #include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
 
 #include <DetourCommon.h>
 #include <DetourNavMesh.h>
 #include <DetourNavMeshQuery.h>
-// #include <Recast.h>
 
 #include "main.h"
+#include "demo_part01.h"
+#include "demo_part02.h"
 
-using namespace std;
-
-void demoFindRandomPoint(dtNavMeshQuery* navQuery, dtQueryFilter* filter) {
-	float randomPoint[3];
-    dtPolyRef startPolyRef;
-
-	float halfExtents[3] = { 5.0f, 5.0f, 5.0f };
-	dtPolyRef findPolyRef;
-
-	bool valid = false;
-
-	for (int i = 0; i < 10; i++) {
-		dtStatus status = navQuery->findRandomPoint(filter, frand, &startPolyRef, randomPoint);
-		if (dtStatusFailed(status)) {
-			std::cerr << "Failed to find a random point. Error: " << status << std::endl;
-			continue;
-		}
-		navQuery->findNearestPoly(randomPoint, halfExtents, filter, &findPolyRef, 0);
-		valid = navQuery->isValidPolyRef(findPolyRef, filter);
-
-		std::cout << "Random Point: (" << randomPoint[0] << ", " << randomPoint[1] << ", " << randomPoint[2] << "), valid: " << valid << std::endl;
-	}
+std::string demoLoopInput() {
+	std::cout << "  -> 0. exit" << std::endl;
+	std::cout << "  -> 1. demo part 01" << std::endl;
+	std::cout << "  -> 2. demo part 02" << std::endl;
+	std::cout << "choose demo part: ";
+	std::string input;
+	std::getline(std::cin, input);
+	return input;
 }
 
-void demoRaycast(dtNavMeshQuery* navQuery, dtQueryFilter* filter) {
-	// 点A的位置
-    float startPoint[3] = {402.12, 0.182837, -428.127};
-    // 移动方向B
-    float moveDirection[3] = {0, 1, 0.5};
-    // 要前进的距离
-    float moveDistance = 10.0f;
-
-    // 计算点D
-    float endPoint[3];
-    dtVmad(endPoint, startPoint, moveDirection, moveDistance);
-
-    // 执行 raycast 操作，找到点D 位于哪个可行走区域
-    const float ext[3] = {2.0f, 4.0f, 2.0f};  // 射线的扩展参数，根据需要调整
-    dtPolyRef startRef;
-    navQuery->findNearestPoly(startPoint, ext, filter, &startRef, nullptr);
-    
-    float hitNormal[3];
-    float t = 0.0f;
-    navQuery->raycast(startRef, startPoint, moveDirection, filter, &t, hitNormal, nullptr, nullptr, 0);
-
-    if (t < 1.0f) {
-        // 找到了可行走区域，计算点D的位置
-        float hitPoint[3];
-        dtVmad(hitPoint, startPoint, moveDirection, t * moveDistance);
-        std::cout << "Point D is at (" << hitPoint[0] << ", " << hitPoint[1] << ", " << hitPoint[2] << ")" << std::endl;
-    } else {
-        std::cout << "No valid path found for point D." << std::endl;
-    }
-}
-
-void demo() {
-    const char* path = "testsync.bin";
-
+void demo(const char* path) {
     dtNavMesh* navMesh = load_mesh(path);
+	if (navMesh == 0) {
+		std::cout << "Failed to load navmesh [" << path << "]" << std::endl;
+		return;
+	}
+
+	// 获取导航网格的参数
+	const dtNavMeshParams* navParams = navMesh->getParams();
+
+	// 输出导航网格的参数信息
+	std::cout << "Navigation Mesh Parameters:" << std::endl;
+	std::cout << "Max Tiles: " << navMesh->getMaxTiles() << std::endl;
+	std::cout << "Params.tileWidth: " << navParams->tileWidth <<std::endl;
+	std::cout << "Params.tileHeight: " << navParams->tileHeight <<std::endl;
+	std::cout << "Params.maxPolys: " << navParams->maxPolys << std::endl;
     
     dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
 
-    navQuery->init(navMesh, 2048);
+    navQuery->init(navMesh, 16384);
 
     dtQueryFilter filter;
     filter.setIncludeFlags(1); // You may need to adjust this flag based on your mesh.
 
-	demoFindRandomPoint(navQuery, &filter);
-	demoRaycast(navQuery, &filter);
+	std::cout << "======================================================" << std::endl;
+	int count = 0;
+	while (true)
+	{
+		count += 1;
+		std::cout << "++++++++++++++++++++++++ [loop=" << count << "] ++++++++++++++++++++" << std::endl;
+		std::string input = demoLoopInput();
+		if (input == "0") {
+			break;
+		}
+		if (input == "1") {
+			demoPart01(navQuery, &filter);
+			continue;
+		}
+		if (input == "2") {
+			demoPart02(navQuery, &filter);
+			continue;
+		}
+		std::cout << "invalid input" << std::endl;
+	}
+	std::cout << "=======================================================" << std::endl;
 
     // Clean up resources.
 	std::cout << "Cleaning up..." << std::endl;
@@ -85,9 +76,18 @@ void demo() {
 
 int main(int argc, char** argv)
 {
-    cout << "hello world!" << endl;
+    std::cout << "hello world!" << std::endl;
 
-	demo();
+	const char* defaultNavmesh = "D:\\proj\\xxx\\bin\\navmesh\\testsync.bin";
+	char * navmesh = getenv("RD_NAVMESH");
+	if (navmesh == NULL) {
+		std::cout << "env RD_NAVMESH not set, use default navmesh [" << defaultNavmesh <<"]" << std::endl;
+		navmesh = strdup(defaultNavmesh);
+	} else {
+		std::cout << "navmesh use env RD_NAVMESH [" << navmesh << "]" << std::endl;
+	}
+
+	demo(navmesh);
 
     return 0;
 }

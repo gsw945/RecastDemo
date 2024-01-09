@@ -1,2 +1,2 @@
-set RD_NAVMESH=D:\proj\xxx\bin\navmesh\world.bin
+set RD_NAVMESH=D:\proj\CCCMobile\Server_Mobile\bin\navmesh\world.bin
 xmake run -D -y

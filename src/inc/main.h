@@ -111,10 +111,22 @@ std::vector<int> stringSplit(std::string str, char delimiter) {
 
 	for (int i; ss >> i;) {
 		vect.push_back(i);    
-		if (ss.peek() == delimiter) {
+		if (ss.peek() == delimiter || ss.peek() == ' ') {
 			ss.ignore();
 		}
 	}
 
 	return vect;
+}
+
+template <typename T>
+void printArray(T* array, size_t length, const char* delimiter) {
+	std::ostringstream oss;
+	for (int i = 0; i < length; i++) {
+		if (i > 0) {
+			oss << delimiter;
+		}
+		oss << array[i];
+	}
+	std::cout << '[' << oss.str() << ']' << std::endl;
 }

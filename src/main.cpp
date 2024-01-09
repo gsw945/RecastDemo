@@ -18,7 +18,7 @@ std::string demoLoopInput() {
 	std::cout << "  -> 2. demo part 02" << std::endl;
 	std::cout << "choose demo part: ";
 	std::string input;
-	std::getline(std::cin, input);
+	getline(std::cin, input);
 	return input;
 }
 

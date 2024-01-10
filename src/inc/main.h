@@ -30,6 +30,42 @@ struct NavMeshTileHeader
 	int dataSize;
 };
 
+// Vector3 struct
+template <typename T>
+struct Vector3 {
+    T x;
+	T y;
+	T z;
+	Vector3 operator+(const Vector3& v) const {
+		Vector3 result;
+		result.x = x + v.x;
+		result.y = y + v.y;
+		result.z = z + v.z;
+		return result;
+	}
+	Vector3 operator-(const Vector3& v) const {
+		Vector3 result;
+		result.x = x - v.x;
+		result.y = y - v.y;
+		result.z = z - v.z;
+		return result;
+	}
+	Vector3 operator*(const T& f) const {
+		Vector3 result;
+		result.x = x * f;
+		result.y = y * f;
+		result.z = z * f;
+		return result;
+	}
+	Vector3 operator/(const T& f) const {
+		Vector3 result;
+		result.x = x / f;
+		result.y = y / f;
+		result.z = z / f;
+		return result;
+	}
+};
+
 static float frand() {
   return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 }
@@ -105,14 +141,18 @@ dtNavMesh* load_mesh(const char* path)
 	return mesh;
 }
 
-std::vector<int> stringSplit(std::string str, char delimiter) {
+std::vector<int> stringSplit(std::string str, std::string delimiter = ", ") {
 	std::vector<int> vect;
 	std::stringstream ss(str);
 
 	for (int i; ss >> i;) {
-		vect.push_back(i);    
-		if (ss.peek() == delimiter || ss.peek() == ' ') {
-			ss.ignore();
+		vect.push_back(i);
+		auto peek = ss.peek();
+		for (size_t j = 0; j < delimiter.length(); j++)
+		{
+			if (peek == delimiter[j]) {
+				ss.ignore();
+			}
 		}
 	}
 
@@ -120,7 +160,7 @@ std::vector<int> stringSplit(std::string str, char delimiter) {
 }
 
 template <typename T>
-void printArray(T* array, size_t length, const char* delimiter) {
+std::string joinArray(T* array, size_t length, const char* delimiter = ", ") {
 	std::ostringstream oss;
 	for (int i = 0; i < length; i++) {
 		if (i > 0) {
@@ -128,5 +168,10 @@ void printArray(T* array, size_t length, const char* delimiter) {
 		}
 		oss << array[i];
 	}
-	std::cout << '[' << oss.str() << ']' << std::endl;
+	return oss.str();
+}
+
+template <typename T>
+void printArray(T* array, size_t length, const char* delimiter = ", ") {
+	std::cout << '[' << joinArray(array, length, delimiter) << ']' << std::endl;
 }
